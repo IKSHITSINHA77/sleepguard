@@ -157,7 +157,7 @@
     <section class="view" id="assessment">
       <div class="panel">
         <div class="section-head"><h2 class="section-title">Sleep assessment</h2><p class="section-desc">Complete the fields below. Your entries are sent to the local Flask prediction endpoint.</p></div>
-        <form id="assessmentForm">
+        <form id="assessmentForm" data-csrf-token="{{ csrf_token }}">
           <div class="form-section">
             <h3>01 &nbsp; Personal information</h3>
             <div class="form-grid">
@@ -258,6 +258,7 @@
 
   form.addEventListener("reset", () => {
     errorBox.textContent = "";
+    errorBox.classList.remove("show");
     resultBox.classList.remove("show");
   });
 
@@ -278,10 +279,13 @@
 
     try {
       const response = await fetch("/api/predict", {
-        method:"POST",
-        headers:{"Content-Type":"application/json","X-CSRF-Token":{{ csrf_token|tojson }}},
-        body:JSON.stringify(payload)
-      });
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-Token": csrfToken
+            },
+            body: JSON.stringify(payload)
+        });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Prediction could not be completed.");
 
