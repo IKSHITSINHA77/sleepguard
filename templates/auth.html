@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#172638"><title>{{ 'Create account' if mode == 'register' else 'Sign in' }} | SleepGuard</title>
+<style>
+:root{--navy:#172638;--ink:#263647;--muted:#748292;--line:#e2e8ec;--paper:#f3f5f6;--blue:#6d879d}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:var(--paper);color:var(--ink);font:14px/1.6 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;display:grid;grid-template-columns:1fr 1fr}
+.visual{background:var(--navy);color:#fff;padding:clamp(35px,7vw,90px);display:flex;flex-direction:column;justify-content:space-between;min-height:100vh;position:relative;overflow:hidden}
+.visual:after{content:"";position:absolute;width:440px;height:440px;border:1px solid #ffffff20;border-radius:50%;right:-180px;bottom:-140px;box-shadow:0 0 0 35px #ffffff08,0 0 0 75px #ffffff06}
+.brand{font:600 29px Georgia,serif;letter-spacing:-.6px}.brand span{color:#a9bdcb}.visual-copy{position:relative;z-index:1;max-width:510px}.eyebrow{color:#a9bdcb;font-size:10px;letter-spacing:1.7px;text-transform:uppercase;font-weight:700}.visual h1{font:600 clamp(34px,4vw,52px)/1.1 Georgia,serif;letter-spacing:-1px;margin:14px 0}.visual p{color:#c2cdd6;max-width:430px}.visual-foot{font-size:11px;color:#a9bdcb;position:relative;z-index:1}
+.right{display:grid;place-items:center;padding:32px 22px}.auth{width:min(420px,100%)}.auth h2{font:600 30px Georgia,serif;color:var(--navy);margin:7px 0}.sub{color:var(--muted);font-size:12px;margin:0 0 25px}.field{display:grid;gap:6px;margin:15px 0}.field label{font-size:11px;font-weight:650;color:#586879}.field input{width:100%;height:45px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:white;color:var(--ink);outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #6d879d20}.btn{width:100%;border:0;border-radius:8px;background:var(--navy);color:#fff;padding:13px;font-weight:650;margin-top:10px;cursor:pointer}.btn:hover{background:#2a4056}.error{background:#fbefed;color:#93483f;border-radius:7px;padding:10px 12px;font-size:12px;margin:0 0 14px}.switch{text-align:center;color:var(--muted);font-size:12px;margin-top:20px}.switch a{color:var(--navy);font-weight:700;text-decoration:none}.fine{font-size:10px;color:#8a96a2;margin-top:20px;text-align:center}
+@media(max-width:760px){body{grid-template-columns:1fr}.visual{min-height:auto;padding:24px 25px 28px}.visual-copy{margin:38px 0 22px}.visual h1{font-size:34px}.visual-foot{display:none}.right{padding:38px 22px}}
+</style></head>
+<body>
+<section class="visual">
+  <div class="brand">Sleep<span>Guard</span></div>
+  <div class="visual-copy"><div class="eyebrow">Sleep health insights</div><h1>A more thoughtful way to explore your sleep.</h1><p>Sign in to access your assessment workspace, explore model outputs and review sleep-pattern insights.</p></div>
+  <div class="visual-foot">An educational machine-learning project · Not a medical device</div>
+</section>
+<main class="right"><div class="auth">
+  <div class="eyebrow">Your personal workspace</div>
+  <h2>{{ 'Create your account' if mode == 'register' else 'Welcome back' }}</h2>
+  <p class="sub">{{ 'Set up an account to access your SleepGuard dashboard.' if mode == 'register' else 'Enter your details to continue to SleepGuard.' }}</p>
+  {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+  <form method="post" action="{{ url_for('register_post') if mode == 'register' else url_for('login_post', next=request.args.get('next','')) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    {% if mode == 'register' %}
+    <div class="field"><label for="name">Full name</label><input id="name" name="name" type="text" autocomplete="name" maxlength="80" placeholder="Your name" required></div>
+    {% endif %}
+    <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="you@example.com" required></div>
+    <div class="field"><label for="password">Password</label><input id="password" name="password" type="password" autocomplete="{{ 'new-password' if mode == 'register' else 'current-password' }}" minlength="{{ 8 if mode == 'register' else 1 }}" placeholder="{{ 'At least 8 characters' if mode == 'register' else 'Enter your password' }}" required></div>
+    {% if mode == 'register' %}<div class="field"><label for="confirm_password">Confirm password</label><input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter your password" required></div>{% endif %}
+    <button class="btn" type="submit">{{ 'Create account' if mode == 'register' else 'Sign in' }}</button>
+  </form>
+  <div class="switch">{{ 'Already have an account?' if mode == 'register' else "Don't have an account?" }} <a href="{{ url_for('login') if mode == 'register' else url_for('register') }}">{{ 'Sign in' if mode == 'register' else 'Create account' }}</a></div>
+  <div class="fine">Your password is stored as a one-way hash. Never share your password with anyone.</div>
+</div></main>
+</body></html>

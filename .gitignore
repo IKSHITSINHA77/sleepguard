@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# User database
+sleepguard_users.db
+*.db
+
+# Temporary files
+*.log
+.DS_Store

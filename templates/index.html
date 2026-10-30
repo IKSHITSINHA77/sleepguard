@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172638">
+  <title>SleepGuard | Sleep health insights</title>
+  <style>
+    :root {
+      --ink:#243244; --navy:#172638; --navy-soft:#263b50; --muted:#718092;
+      --paper:#f4f6f7; --white:#fff; --line:#e3e8ec; --blue:#6d879d;
+      --blue-pale:#edf2f5; --green:#547765; --red:#a6534b;
+      --shadow:0 12px 35px rgba(25,42,58,.055); --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--paper);color:var(--ink);font:14px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .shell{min-height:100vh;display:grid;grid-template-columns:245px minmax(0,1fr)}
+    .sidebar{position:sticky;top:0;height:100vh;background:var(--navy);color:#f5f7f9;padding:30px 18px;display:flex;flex-direction:column}
+    .brand{padding:0 12px 34px;font:600 27px/1.2 Georgia,serif;letter-spacing:-.7px}
+    .brand span{color:#a9bdcb}
+    .nav-caption{padding:0 12px 12px;color:#9eafbd;font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+    .nav{display:grid;gap:6px}
+    .nav button{border:0;background:transparent;color:#c6d0d9;text-align:left;padding:12px 13px;border-radius:9px;transition:.18s}
+    .nav button:hover,.nav button.active{background:var(--navy-soft);color:#fff}
+    .nav button.active{box-shadow:inset 3px 0 #a9bdcb}
+    .side-foot{margin-top:auto;padding:14px 12px;color:#9eafbd;font-size:11px;line-height:1.7}
+    .side-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#9ab3a4;margin-right:7px}
+    .main{width:100%;max-width:1440px;margin:0 auto;padding:34px clamp(20px,4vw,58px) 60px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+    .eyebrow{color:var(--blue);font-size:10px;font-weight:750;letter-spacing:1.6px;text-transform:uppercase}
+    h1{font:600 clamp(28px,3vw,36px)/1.2 Georgia,serif;color:var(--navy);margin:5px 0 0;letter-spacing:-.5px}
+    .model-chip{border:1px solid var(--line);background:#fff;border-radius:30px;padding:8px 13px;color:var(--muted);font-size:11px}
+    .account{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:5px 7px 5px 12px}
+    .avatar{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:var(--blue-pale);color:var(--navy);font-weight:750;font-size:11px}
+    .account-name{font-size:11px;font-weight:650;color:var(--navy);max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .logout{border:0;background:var(--navy);color:white;border-radius:20px;padding:7px 11px;font-size:10px;font-weight:650}
+    .logout:hover{background:#2a4056}
+    .model-chip strong{color:var(--navy)}
+    .view{display:none}.view.active{display:block}
+    .intro{max-width:700px;color:var(--muted);margin:0 0 22px}
+    .hero{background:var(--navy);color:#fff;border-radius:var(--radius);padding:30px clamp(22px,4vw,38px);margin-bottom:18px;position:relative;overflow:hidden}
+    .hero:after{content:"";position:absolute;width:230px;height:230px;border:1px solid rgba(255,255,255,.12);border-radius:50%;right:-65px;top:-100px;box-shadow:0 0 0 28px rgba(255,255,255,.025),0 0 0 58px rgba(255,255,255,.02)}
+    .hero .eyebrow{color:#b5c5d1}
+    .hero h2{font:600 clamp(25px,3vw,34px)/1.2 Georgia,serif;max-width:570px;margin:10px 0}
+    .hero p{max-width:570px;color:#c5d0d9;margin:0 0 20px}
+    .hero .primary{background:#f4f6f7;color:var(--navy)}
+    .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:18px}
+    .card,.panel{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+    .stat-label{font-size:11px;color:var(--muted)}
+    .stat-value{font:600 25px/1.25 Georgia,serif;color:var(--navy);margin-top:8px;overflow-wrap:anywhere}
+    .stat-note{font-size:11px;color:var(--muted);margin-top:4px}
+    .section-head{margin-bottom:18px}
+    .section-title{font:600 21px/1.3 Georgia,serif;color:var(--navy);margin:0 0 5px}
+    .section-desc{font-size:12px;color:var(--muted);margin:0}
+    .primary,.secondary{border-radius:8px;padding:11px 17px;font-weight:650;border:1px solid transparent;transition:.18s}
+    .primary{background:var(--navy);color:white}.primary:hover{background:#2a4056}
+    .primary:disabled{opacity:.6;cursor:wait}
+    .secondary{background:#fff;border-color:var(--line);color:var(--ink)}.secondary:hover{background:#f6f8f9}
+    .notice{background:#f0f3f4;border-left:3px solid #a2b1bb;padding:13px 15px;border-radius:7px;color:#657383;font-size:11px;margin-top:18px}
+    .form-section{padding:20px 0;border-top:1px solid var(--line)}
+    .form-section:first-of-type{border-top:0;padding-top:0}
+    .form-section h3{font-size:13px;color:var(--navy);margin:0 0 14px}
+    .form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+    .field{display:flex;flex-direction:column;gap:6px;min-width:0}
+    .field label{font-size:11px;color:#59697a;font-weight:600}
+    .field input,.field select{width:100%;min-height:42px;padding:10px 11px;border:1px solid #dce3e8;border-radius:8px;background:#fff;color:var(--ink);outline:none}
+    .field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(109,135,157,.13)}
+    .field small{font-size:10px;color:#8a96a3}
+    .actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}
+    .error{color:var(--red);font-size:12px;min-height:20px;margin-top:12px}
+    .result{display:none;margin-top:18px;border-color:#d9e2e8}
+    .result.show{display:block}
+    .result-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .result-name{font:600 28px Georgia,serif;color:var(--navy);margin:5px 0}
+    .pill{display:inline-flex;background:var(--blue-pale);color:#4c687f;border-radius:30px;padding:6px 11px;font-size:10px}
+    .probability{margin-top:20px}
+    .prob-row{display:flex;justify-content:space-between;gap:12px;font-size:11px;margin:12px 0 6px}
+    .track{height:8px;border-radius:20px;background:#edf1f3;overflow:hidden}
+    .fill{height:100%;background:var(--blue);border-radius:20px}
+    .result-message{color:var(--muted);font-size:12px;margin:8px 0 0}
+    .fine-print{font-size:10px;color:#8793a0;margin:14px 0 0}
+    .analytics-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;margin-top:15px}
+    .table-wrap{overflow-x:auto}
+    table{width:100%;border-collapse:collapse;font-size:11px}
+    th,td{text-align:left;padding:11px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+    th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+    .chart-img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:9px;margin-top:14px}
+    .empty{padding:20px;border:1px dashed #cbd5dc;border-radius:9px;color:var(--muted);font-size:12px}
+    .report-text{white-space:pre-wrap;overflow:auto;font:11px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;color:#596778}
+    .about-list{padding-left:18px;color:var(--muted);font-size:12px}
+    .about-list li{margin:7px 0}
+    @media(max-width:950px){.shell{grid-template-columns:1fr}.sidebar{position:relative;height:auto;padding:17px 18px}.brand{padding:0 5px 14px}.nav-caption,.side-foot{display:none}.nav{display:flex;overflow-x:auto}.nav button{white-space:nowrap;padding:9px 12px}.main{padding:25px 18px 45px}}
+    @media(max-width:650px){.main{padding:20px 14px 35px}.topbar{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr}.form-grid,.analytics-grid{grid-template-columns:1fr}.hero{padding:24px 20px}.card,.panel{padding:17px}.result-top{flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">Sleep<span>Guard</span></div>
+    <div class="nav-caption">Workspace</div>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" type="button" data-view="dashboard">◫ &nbsp; Overview</button>
+      <button type="button" data-view="assessment">＋ &nbsp; Assessment</button>
+      <button type="button" data-view="analytics">▥ &nbsp; Model analytics</button>
+      <button type="button" data-view="about">ⓘ &nbsp; About</button>
+    </nav>
+    <div class="side-foot"><span class="side-dot"></span>Machine-learning research project<br>Sleep health insights</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">Sleep health platform</div><h1 id="pageTitle">Overview</h1></div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="model-chip">Active model: <strong>{{ meta.best_model if meta else 'Not trained' }}</strong></div>
+        <div class="account">
+          <span class="avatar">{{ current_user.name[:1]|upper if current_user else 'U' }}</span>
+          <span class="account-name">{{ current_user.name if current_user else 'User' }}</span>
+          <form method="post" action="{{ url_for('logout') }}" style="margin:0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <button class="logout" type="submit">Sign out</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    {% if setup_error %}
+    <div class="panel" role="alert">
+      <h2 class="section-title">Prediction model is not ready</h2>
+      <p class="section-desc">{{ setup_error }}</p>
+      <p class="section-desc">Train the model first, then restart or refresh the Flask application.</p>
+    </div>
+    {% endif %}
+
+    <section class="view active" id="dashboard">
+      <div class="hero">
+        <div class="eyebrow">A clearer view of sleep patterns</div>
+        <h2>Understand your sleep. Explore the patterns.</h2>
+        <p>Review sleep and lifestyle indicators with a machine-learning classification built for an academic research project.</p>
+        <button class="primary" type="button" onclick="showView('assessment')">Start an assessment&nbsp; →</button>
+      </div>
+      <p class="intro">SleepGuard brings together a simple assessment experience and model evaluation results in one place.</p>
+      <div class="stats">
+        <article class="card"><div class="stat-label">Training records</div><div class="stat-value">{{ meta.n_rows if meta else '—' }}</div><div class="stat-note">Records used in the latest training run</div></article>
+        <article class="card"><div class="stat-label">Selected classifier</div><div class="stat-value" style="font-size:21px">{{ meta.best_model if meta else '—' }}</div><div class="stat-note">Selected using cross-validation macro F1</div></article>
+        <article class="card"><div class="stat-label">Hold-out macro F1</div><div class="stat-value">{{ '%.1f'|format(meta.test_f1_macro*100) ~ '%' if meta else '—' }}</div><div class="stat-note">Measured on the held-out test split</div></article>
+      </div>
+      <div class="panel">
+        <div class="section-head"><h2 class="section-title">Ready to begin?</h2><p class="section-desc">Enter your sleep, lifestyle and health indicators to view the model output.</p></div>
+        <button class="primary" type="button" onclick="showView('assessment')">Open sleep assessment</button>
+      </div>
+      <div class="notice">SleepGuard is an educational machine-learning project. Its output is not a diagnosis, medical advice or a substitute for assessment by a qualified healthcare professional.</div>
+    </section>
+
+    <section class="view" id="assessment">
+      <div class="panel">
+        <div class="section-head"><h2 class="section-title">Sleep assessment</h2><p class="section-desc">Complete the fields below. Your entries are sent to the local Flask prediction endpoint.</p></div>
+        <form id="assessmentForm">
+          <div class="form-section">
+            <h3>01 &nbsp; Personal information</h3>
+            <div class="form-grid">
+              <div class="field"><label for="Gender">Gender</label><select id="Gender" name="Gender" required>{% if meta %}{% for v in meta.choices['Gender'] %}<option value="{{v}}">{{v}}</option>{% endfor %}{% endif %}</select></div>
+              <div class="field"><label for="Age">Age (years)</label><input id="Age" name="Age" type="number" min="18" max="100" value="35" required></div>
+              <div class="field"><label for="Occupation">Occupation</label><select id="Occupation" name="Occupation" required>{% if meta %}{% for v in meta.choices['Occupation'] %}<option value="{{v}}">{{v}}</option>{% endfor %}{% endif %}</select></div>
+              <div class="field"><label for="bmi">BMI category</label><select id="bmi" name="BMI Category" required>{% if meta %}{% for v in meta.choices['BMI Category'] %}<option value="{{v}}">{{v}}</option>{% endfor %}{% endif %}</select></div>
+            </div>
+          </div>
+          <div class="form-section">
+            <h3>02 &nbsp; Sleep and lifestyle</h3>
+            <div class="form-grid">
+              <div class="field"><label for="sleep">Sleep duration (hours)</label><input id="sleep" name="Sleep Duration" type="number" min="2" max="14" step="0.1" value="7" required></div>
+              <div class="field"><label for="quality">Quality of sleep (1–10)</label><input id="quality" name="Quality of Sleep" type="number" min="1" max="10" value="7" required></div>
+              <div class="field"><label for="stress">Stress level (1–10)</label><input id="stress" name="Stress Level" type="number" min="1" max="10" value="5" required></div>
+              <div class="field"><label for="activity">Physical activity (minutes/day)</label><input id="activity" name="Physical Activity Level" type="number" min="0" max="300" value="45" required></div>
+              <div class="field"><label for="steps">Daily steps</label><input id="steps" name="Daily Steps" type="number" min="0" max="40000" value="6000" required></div>
+            </div>
+          </div>
+          <div class="form-section">
+            <h3>03 &nbsp; Health indicators</h3>
+            <div class="form-grid">
+              <div class="field"><label for="heart">Heart rate (beats/min)</label><input id="heart" name="Heart Rate" type="number" min="35" max="200" value="72" required></div>
+              <div class="field"><label for="sys">Systolic blood pressure</label><input id="sys" name="Systolic" type="number" min="70" max="250" value="120" required></div>
+              <div class="field"><label for="dia">Diastolic blood pressure</label><input id="dia" name="Diastolic" type="number" min="40" max="150" value="80" required></div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="primary" id="submitBtn" type="submit" {% if not meta %}disabled{% endif %}>Analyse sleep pattern</button>
+            <button class="secondary" type="reset">Reset form</button>
+            <span class="section-desc">All fields are required.</span>
+          </div>
+        </form>
+        <div class="error" id="error" role="alert" aria-live="polite"></div>
+      </div>
+
+      <div class="panel result" id="result" aria-live="polite">
+        <div class="result-top">
+          <div><div class="eyebrow">Assessment result</div><div class="result-name" id="resultName">—</div><p class="result-message" id="resultMessage"></p></div>
+          <span class="pill" id="modelTag">Model</span>
+        </div>
+        <div class="probability" id="probabilities"></div>
+        <p class="fine-print">Percentages represent the classifier's estimated class probabilities. They are not medically calibrated risk scores and should not be interpreted as a diagnosis.</p>
+      </div>
+    </section>
+
+    <section class="view" id="analytics">
+      <p class="intro">Evaluation information saved by your latest training run. This section reads existing reports; it does not generate or assume performance values.</p>
+      <div class="stats">
+        <article class="card"><div class="stat-label">Dataset records</div><div class="stat-value" id="aRows">—</div></article>
+        <article class="card"><div class="stat-label">Best model</div><div class="stat-value" id="aBest" style="font-size:21px">—</div></article>
+        <article class="card"><div class="stat-label">Hold-out macro F1</div><div class="stat-value" id="aF1">—</div></article>
+      </div>
+      <div class="panel">
+        <div class="section-head"><h2 class="section-title">Model comparison</h2><p class="section-desc">Cross-validation metrics. Macro averages give equal weight to each class.</p></div>
+        <div class="table-wrap" id="modelTable"><div class="empty">Loading saved model metrics…</div></div>
+      </div>
+      <div class="analytics-grid">
+        <div class="panel"><h2 class="section-title">Confusion matrix</h2><img class="chart-img" id="cmImg" alt="Confusion matrix" hidden><div class="empty" id="cmEmpty">No confusion matrix report found.</div></div>
+        <div class="panel"><h2 class="section-title">Feature importance</h2><img class="chart-img" id="fiImg" alt="Permutation feature importance" hidden><div class="empty" id="fiEmpty">No feature importance report found.</div></div>
+      </div>
+      <div class="panel" style="margin-top:15px"><h2 class="section-title">Classification report</h2><pre class="report-text" id="classReport">Report not loaded.</pre></div>
+    </section>
+
+    <section class="view" id="about">
+      <div class="panel">
+        <div class="section-head"><h2 class="section-title">About SleepGuard</h2><p class="section-desc">A student machine-learning project exploring classification of sleep-disorder patterns using sleep and lifestyle attributes.</p></div>
+        <h3>Machine-learning models</h3>
+        <ul class="about-list"><li>Support Vector Machine (SVM)</li><li>K-Nearest Neighbours (KNN)</li><li>Decision Tree</li><li>Random Forest</li><li>Artificial Neural Network (MLP)</li><li>Soft-voting ensemble</li></ul>
+        <h3>Evaluation approach</h3>
+        <p class="section-desc">The training pipeline compares models using repeated stratified cross-validation, selects a model using macro F1, and evaluates the selected model on a separate hold-out test split.</p>
+        <div class="notice">Important limitation: SleepGuard is not a medical device. Predictions can be incorrect and must not be used to diagnose, treat or make medical decisions. Synthetic data is for software testing only and must not be presented as real-world model evidence.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  const pageTitles = {dashboard:"Overview", assessment:"Sleep assessment", analytics:"Model analytics", about:"About SleepGuard"};
+  let analyticsLoaded = false;
+
+  function showView(viewId) {
+    document.querySelectorAll(".view").forEach(section => section.classList.toggle("active", section.id === viewId));
+    document.querySelectorAll(".nav button").forEach(button => button.classList.toggle("active", button.dataset.view === viewId));
+    document.getElementById("pageTitle").textContent = pageTitles[viewId] || "SleepGuard";
+    if (viewId === "analytics") loadAnalytics();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  document.querySelectorAll(".nav button").forEach(button => {
+    button.addEventListener("click", () => showView(button.dataset.view));
+  });
+
+  const form = document.getElementById("assessmentForm");
+  const submitButton = document.getElementById("submitBtn");
+  const errorBox = document.getElementById("error");
+  const resultBox = document.getElementById("result");
+
+  form.addEventListener("reset", () => {
+    errorBox.textContent = "";
+    resultBox.classList.remove("show");
+  });
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    errorBox.textContent = "";
+    resultBox.classList.remove("show");
+
+    if (!form.reportValidity()) return;
+
+    const payload = Object.fromEntries(new FormData(form).entries());
+    for (const key of Object.keys(payload)) {
+      if (!["Gender", "Occupation", "BMI Category"].includes(key)) payload[key] = Number(payload[key]);
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Analysing…";
+
+    try {
+      const response = await fetch("/api/predict", {
+        method:"POST",
+        headers:{"Content-Type":"application/json","X-CSRF-Token":{{ csrf_token|tojson }}},
+        body:JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Prediction could not be completed.");
+
+      document.getElementById("resultName").textContent = data.prediction || "Result unavailable";
+      document.getElementById("resultMessage").textContent = data.message || "Review this result with a qualified professional.";
+      document.getElementById("modelTag").textContent = "Model: " + (data.model || "Unknown");
+
+      const probabilityBox = document.getElementById("probabilities");
+      probabilityBox.replaceChildren();
+      Object.entries(data.probabilities || {}).sort((a,b) => b[1]-a[1]).forEach(([label, value]) => {
+        const row = document.createElement("div");
+        row.className = "prob-row";
+        const labelNode = document.createElement("span");
+        labelNode.textContent = label;
+        const valueNode = document.createElement("strong");
+        valueNode.textContent = (Number(value)*100).toFixed(1) + "%";
+        row.append(labelNode, valueNode);
+
+        const track = document.createElement("div");
+        track.className = "track";
+        const fill = document.createElement("div");
+        fill.className = "fill";
+        fill.style.width = Math.max(0, Math.min(100, Number(value)*100)) + "%";
+        track.append(fill);
+        probabilityBox.append(row, track);
+      });
+
+      resultBox.classList.add("show");
+      resultBox.scrollIntoView({behavior:"smooth", block:"start"});
+    } catch (error) {
+      errorBox.textContent = error.message || "Something went wrong. Please try again.";
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Analyse sleep pattern";
+    }
+  });
+
+  async function loadAnalytics() {
+    if (analyticsLoaded) return;
+    const tableContainer = document.getElementById("modelTable");
+    try {
+      const response = await fetch("/api/analytics");
+      if (!response.ok) throw new Error("Analytics endpoint returned an error.");
+      const data = await response.json();
+
+      document.getElementById("aRows").textContent = data.meta?.n_rows ?? "—";
+      document.getElementById("aBest").textContent = data.meta?.best_model ?? "—";
+      document.getElementById("aF1").textContent = data.meta?.test_f1_macro == null ? "—" : (Number(data.meta.test_f1_macro)*100).toFixed(1) + "%";
+
+      if (!data.available || !Array.isArray(data.models) || data.models.length === 0) {
+        tableContainer.innerHTML = '<div class="empty">No model comparison report found. Train the model to generate analytics.</div>';
+      } else {
+        const columns = ["model", "accuracy", "precision", "recall", "f1"];
+        const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const headRow = document.createElement("tr");
+        columns.forEach(column => {
+          const th = document.createElement("th");
+          th.textContent = column === "f1" ? "Macro F1" : column.charAt(0).toUpperCase()+column.slice(1);
+          headRow.append(th);
+        });
+        thead.append(headRow);
+        table.append(thead);
+
+        const tbody = document.createElement("tbody");
+        data.models.forEach(model => {
+          const row = document.createElement("tr");
+          columns.forEach(column => {
+            const cell = document.createElement("td");
+            const value = model[column];
+            cell.textContent = column === "model" ? (value ?? "—") : value == null ? "—" : (Number(value)*100).toFixed(1) + "%";
+            row.append(cell);
+          });
+          tbody.append(row);
+        });
+        table.append(tbody);
+        tableContainer.replaceChildren(table);
+      }
+
+      const reports = data.reports || {};
+      [["confusion_matrix.png","cmImg","cmEmpty"],["feature_importance.png","fiImg","fiEmpty"]].forEach(([key,imgId,emptyId]) => {
+        if (reports[key]) {
+          const image = document.getElementById(imgId);
+          image.src = reports[key] + "?v=" + Date.now();
+          image.hidden = false;
+          document.getElementById(emptyId).hidden = true;
+        }
+      });
+
+      if (reports["classification_report.txt"]) {
+        const reportResponse = await fetch(reports["classification_report.txt"]);
+        document.getElementById("classReport").textContent = reportResponse.ok ? await reportResponse.text() : "Could not load classification report.";
+      } else {
+        document.getElementById("classReport").textContent = "No classification report found. Train the model to generate it.";
+      }
+      analyticsLoaded = true;
+    } catch (error) {
+      tableContainer.innerHTML = '<div class="empty">Could not load analytics. Confirm that the Flask server is running and the model has been trained.</div>';
+    }
+  }
+</script>
+</body>
+</html>
