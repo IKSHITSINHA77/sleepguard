@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <meta name="theme-color" content="#172638">
   <title>SleepGuard | Sleep health insights</title>
   <style>
@@ -269,6 +270,11 @@
 
     if (!form.reportValidity()) return;
 
+    // Retrieve CSRF token from form attribute or meta tag
+    const csrfToken = form.dataset.csrfToken || 
+                      document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") || 
+                      "";
+
     const payload = Object.fromEntries(new FormData(form).entries());
     for (const key of Object.keys(payload)) {
       if (!["Gender", "Occupation", "BMI Category"].includes(key)) payload[key] = Number(payload[key]);
@@ -279,13 +285,14 @@
 
     try {
       const response = await fetch("/api/predict", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-Token": csrfToken
-            },
-            body: JSON.stringify(payload)
-        });
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken,
+          "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify(payload)
+      });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Prediction could not be completed.");
 

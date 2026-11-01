@@ -1,0 +1,68 @@
+{
+  "best_model": "SVM",
+  "classes": [
+    "Insomnia",
+    "None",
+    "Sleep Apnea"
+  ],
+  "test_f1_macro": 0.5771,
+  "n_rows": 400,
+  "bounds": {
+    "Age": [
+      18,
+      100
+    ],
+    "Sleep Duration": [
+      2,
+      14
+    ],
+    "Quality of Sleep": [
+      1,
+      10
+    ],
+    "Physical Activity Level": [
+      0,
+      300
+    ],
+    "Stress Level": [
+      1,
+      10
+    ],
+    "Heart Rate": [
+      35,
+      200
+    ],
+    "Daily Steps": [
+      0,
+      40000
+    ],
+    "Systolic": [
+      70,
+      250
+    ],
+    "Diastolic": [
+      40,
+      150
+    ]
+  },
+  "choices": {
+    "Gender": [
+      "Female",
+      "Male"
+    ],
+    "Occupation": [
+      "Accountant",
+      "Doctor",
+      "Engineer",
+      "Lawyer",
+      "Nurse",
+      "Salesperson",
+      "Teacher"
+    ],
+    "BMI Category": [
+      "Normal",
+      "Obese",
+      "Overweight"
+    ]
+  }
+}

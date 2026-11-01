@@ -1,0 +1,9 @@
+              precision    recall  f1-score   support
+
+    Insomnia       0.31      0.44      0.36         9
+        None       0.91      0.71      0.80        58
+ Sleep Apnea       0.45      0.77      0.57        13
+
+    accuracy                           0.69        80
+   macro avg       0.56      0.64      0.58        80
+weighted avg       0.77      0.69      0.71        80
